@@ -1,58 +1,144 @@
 # QA Analysis
 
-## Overview
+## Billing Widget Review
 
-This document contains a QA review of the provided billing widget mock-up.
+**Project:** Jones Automation Exercise
 
-The purpose of this review is to identify potential functional issues, usability concerns, accessibility considerations, security risks, and product improvements before implementation.
+**Prepared by:** Reuven
 
-Since only a static UI mock-up was provided, not every observation can be classified as a confirmed bug. Where business requirements are unknown, observations are presented as questions or recommendations.
+**Document Version:** 1.0
 
 ---
 
-# 1. Functional Review
+# 1. Overview
 
-## Observation 1 – Manual Card Type Selection
+This document contains a Quality Assurance review of the provided Billing Widget mock-up.
 
-### Observation
+The objective of this review is to identify:
 
-The user must manually select the card type (Visa, MasterCard, etc.) before entering the card number.
+- Functional issues
+- Usability concerns
+- Accessibility considerations
+- Security risks
+- Product improvement opportunities
+- Areas that require clarification from Product or Business teams
+
+The review is based **only** on the provided UI mock-up.
+
+Because no functional specification or business requirements were supplied, some findings are classified as **Questions** rather than confirmed defects.
+
+---
+
+# 2. Scope
+
+The review covers only the Billing Widget UI.
+
+The following areas are outside the scope of this review:
+
+- Backend implementation
+- Payment provider integration
+- Database
+- API behavior
+- Security implementation
+- PCI compliance implementation
+
+Those areas require implementation review.
+
+---
+
+# 3. Assumptions
+
+The following assumptions were made while reviewing the widget.
+
+Unknown information includes:
+
+- Business requirements
+- Functional specification
+- Validation rules
+- Payment provider
+- Supported countries
+- Currency
+- Tax rules
+- Subscription model
+- Error handling
+- Backend implementation
+
+Because these details are unavailable, several findings are presented as recommendations or questions rather than confirmed defects.
+
+---
+
+# 4. Findings
+
+---
+
+## QA-001
+
+### Severity
+
+Medium
+
+### Category
+
+Usability
+
+### Title
+
+Card Type Must Be Selected Manually
+
+### Description
+
+The user is required to select the card type before entering the credit card number.
 
 ### Risk
 
-The selected card type may not match the actual card number entered by the user.
+The selected card type may not match the actual card number.
 
 Example:
 
-- User selects Visa.
-- User enters a MasterCard number.
+- Visa selected
+- MasterCard number entered
 
-This may result in unnecessary validation errors.
+This can create unnecessary validation failures.
 
 ### Recommendation
 
-Automatically detect the card type from the entered card number while still allowing manual override if required.
+Detect the card type automatically from the entered card number while allowing manual override if necessary.
 
 ---
 
-## Observation 2 – Unclear Payment Amount
+## QA-002
 
-### Observation
+### Severity
 
-The payment amount is displayed only as:
+Severe
+
+### Category
+
+Usability
+
+### Title
+
+Payment Amount Lacks Context
+
+### Description
+
+The displayed amount is
 
 ```
 30.00
 ```
 
+without additional information.
+
 ### Risk
 
 The user cannot determine:
 
-- which currency is used
-- whether this is a one-time payment
-- whether this is a monthly subscription
-- whether taxes are included
+- Currency
+- One-time payment
+- Monthly subscription
+- Annual subscription
+- Whether taxes are included
 
 ### Recommendation
 
@@ -64,56 +150,152 @@ Example:
 $30.00 USD / month
 ```
 
-or
-
-```
-₪30.00 (One-time payment)
-```
-
 ---
 
-## Observation 3 – Continue Button Behavior
+## QA-003
 
-### Observation
+### Severity
 
-The Continue button appears enabled immediately.
+Medium
 
-### Question
+### Category
 
-Should the button remain disabled until all required fields contain valid values?
+Usability
 
-This depends on the intended validation strategy.
+### Title
 
----
+Continue Button Behavior Is Unclear
 
-# 2. Usability Review
+### Description
 
-## Observation 1 – Unlabeled Second Address Field
-
-### Observation
-
-The "Credit Card Billing Street Address" section contains two text fields.
-
-The first field is marked as required.
-
-The second field:
-
-- has no label
-- has no placeholder
-- is not marked as required
+The Continue button does not indicate what happens after clicking.
 
 ### Risk
 
-Users cannot determine the purpose of the second field.
+Users cannot know whether Continue:
 
-It could represent:
+- Charges the card
+- Saves the payment method
+- Opens another screen
+- Reviews the payment
 
-- Apartment number
+### Recommendation
+
+Use more descriptive wording depending on the actual behavior.
+
+Examples:
+
+```
+Continue to Review
+```
+
+```
+Pay $30.00
+```
+
+```
+Save Payment Method
+```
+
+---
+
+## QA-004
+
+### Severity
+
+Low
+
+### Category
+
+Functional
+
+### Title
+
+Cancel Button Behavior Is Undefined
+
+### Description
+
+The interface provides a Cancel button but does not indicate its expected behavior.
+
+### Risk
+
+Users may not know whether Cancel:
+
+- Clears the form
+- Returns to previous screen
+- Cancels the checkout
+- Closes the dialog
+
+### Recommendation
+
+Define the expected behavior and verify it during testing.
+
+---
+
+## QA-005
+
+### Severity
+
+High
+
+### Category
+
+Functional
+
+### Title
+
+Duplicate Submission Protection Is Not Visible
+
+### Description
+
+The UI does not indicate whether Continue becomes disabled after submission.
+
+### Risk
+
+Users may click Continue multiple times, resulting in duplicate payment requests.
+
+### Recommendation
+
+Disable the Continue button after the first click and display a loading indicator until processing completes.
+
+---
+
+## QA-006
+
+### Severity
+
+Medium
+
+### Category
+
+Usability
+
+### Title
+
+Second Address Field Has No Label
+
+### Description
+
+The billing address section contains two address fields.
+
+Only the first field is labeled.
+
+The second field has:
+
+- no label
+- no placeholder
+- no description
+
+### Risk
+
+Users cannot determine what information belongs there.
+
+Possible interpretations include:
+
+- Apartment
 - Suite
 - Building
 - Address Line 2
-
-Different users may enter different information or leave it empty.
 
 ### Recommendation
 
@@ -123,250 +305,864 @@ Rename the second field to:
 Address Line 2 (Optional)
 ```
 
-or remove it if it is unnecessary.
+or remove it if unnecessary.
 
 ---
 
-## Observation 2 – Required Address Information
+## QA-007
 
-### Observation
+### Severity
+
+Question
+
+### Category
+
+Business Requirements
+
+### Title
+
+Are All Billing Address Fields Required?
+
+### Description
 
 The form requires:
 
 - Street Address
 - City
-- State or Province
+- State / Province
 - Postal Code
 
 ### Question
 
-Are all of these fields required according to the business requirements?
-
-Some payment providers require the complete billing address.
-
-Others require only a postal code.
-
-Without business requirements this cannot be confirmed as a defect.
-
-### Recommendation
-
-Collect only the information required for:
-
-- payment processing
-- tax calculation
-- fraud prevention
-
-Reducing unnecessary fields improves the user experience and may increase conversion.
-
----
-
-## Observation 3 – Missing Country Field
-
-### Observation
-
-The form requires "State or Province" but does not include a Country field.
+Are all these fields required by business rules or the payment provider?
 
 ### Risk
 
-Validation depends on the selected country.
-
-Examples:
-
-- US → State
-- Canada → Province
-- Many countries use neither.
-
-Postal code formats also differ between countries.
+Collecting unnecessary information increases user effort and may reduce conversion.
 
 ### Recommendation
 
-Add a Country selector before State or Province.
+Collect only information required for:
 
-Use country-specific validation rules.
+- Payment processing
+- Fraud prevention
+- Tax calculation
+- Regulatory compliance
 
 ---
 
-## Observation 4 – "MI" Abbreviation
+## QA-008
 
-### Observation
+### Severity
 
-The field label "MI" may not be understood by every user.
+Medium
+
+### Category
+
+Functional
+
+### Title
+
+Country Field Is Missing
+
+### Description
+
+The form requests State / Province but does not include a Country selector.
+
+### Risk
+
+Address validation depends on country.
+
+Examples:
+
+- USA uses State
+- Canada uses Province
+- Other countries may use neither
+
+Postal code validation also depends on country.
 
 ### Recommendation
 
-Replace
+## Add a Country field before State / Province and apply country-specific validation.
+
+## QA-009
+
+### Severity
+
+Medium
+
+### Category
+
+Validation
+
+### Title
+
+Postal Code Validation May Be Too Restrictive
+
+### Description
+
+The Postal Code field contains the note:
+
+```
+(No dashes)
+```
+
+### Risk
+
+Postal code formats differ significantly between countries.
+
+Examples:
+
+- 90210
+- SW1A 1AA
+- H3Z 2Y7
+- 10115
+
+Some postal codes include:
+
+- spaces
+- letters
+- dashes
+
+### Recommendation
+
+Validate postal codes according to the selected country instead of applying one universal rule.
+
+---
+
+## QA-010
+
+### Severity
+
+Low
+
+### Category
+
+Usability
+
+### Title
+
+"MI" Abbreviation May Be Confusing
+
+### Description
+
+The field label uses the abbreviation:
 
 ```
 MI
 ```
 
-with
+### Risk
+
+Not every user understands that MI means "Middle Initial".
+
+### Recommendation
+
+Replace the abbreviation with
 
 ```
 Middle Initial
 ```
 
-or provide a tooltip.
+or provide helper text.
 
 ---
 
-# 3. Accessibility Review
+## QA-011
 
-## Observation 1
+### Severity
 
-Required fields are indicated only by a red asterisk.
+Medium
+
+### Category
+
+Usability
+
+### Title
+
+Card Number Input Restricts Common User Behavior
+
+### Description
+
+The field instructs users to enter the card number without spaces or dashes.
 
 ### Risk
 
-Some users may not recognize the meaning of the asterisk.
+Most users naturally paste or type card numbers with spaces.
+
+Rejecting formatted numbers creates unnecessary friction.
 
 ### Recommendation
 
-Provide additional accessible indicators and proper ARIA attributes.
+Accept spaces and dashes.
+
+Normalize the value internally before validation.
 
 ---
 
-## Observation 2
+## QA-012
 
-The mock-up does not show validation messages.
+### Severity
+
+Low
+
+### Category
+
+Usability
+
+### Title
+
+Required Fields Explanation Is Missing
+
+### Description
+
+Required fields are marked only by a red asterisk.
+
+### Risk
+
+Some users may not immediately understand its meaning.
+
+### Recommendation
+
+Display a short explanation.
+
+Example:
+
+```
+Fields marked with * are required.
+```
+
+---
+
+## QA-013
+
+### Severity
+
+Low
+
+### Category
+
+UI
+
+### Title
+
+Payment Amount Is Not Visually Emphasized
+
+### Description
+
+The payment amount blends into the rest of the form.
+
+### Risk
+
+Users may overlook the amount they are about to pay.
+
+### Recommendation
+
+Increase the visual emphasis using larger font size or bold styling.
+
+---
+
+## QA-014
+
+### Severity
+
+Low
+
+### Category
+
+UI
+
+### Title
+
+Accepted Card Brands Are Not Displayed
+
+### Description
+
+The form asks for a card type but does not visually indicate supported payment methods.
+
+### Risk
+
+Users may hesitate if they are unsure whether their card is accepted.
+
+### Recommendation
+
+Display accepted payment brand logos.
+
+Examples:
+
+- Visa
+- MasterCard
+- American Express
+- Discover
+
+---
+
+## QA-015
+
+### Severity
+
+Medium
+
+### Category
+
+Validation
+
+### Title
+
+Expiration Date Validation Must Prevent Past Dates
+
+### Description
+
+The expiration date uses Month and Year dropdowns.
+
+### Risk
+
+The application may allow expired cards if validation is incomplete.
+
+### Recommendation
+
+Prevent selection of expired dates.
+
+Display a clear validation message when necessary.
+
+---
+
+## QA-016
+
+### Severity
+
+Medium
+
+### Category
+
+Validation
+
+### Title
+
+Placeholder Values Should Not Be Accepted
+
+### Description
+
+The expiration dropdowns initially display:
+
+```
+Select Month
+Select Year
+```
+
+### Risk
+
+If placeholder values are treated as valid input, incomplete payment information may be submitted.
+
+### Recommendation
+
+Ensure placeholder values fail validation and cannot be submitted.
+
+---
+
+# Additional Review Notes
+
+## Testability
+
+### Observation
+
+The mock-up does not indicate whether stable automation locators will be available.
+
+### Recommendation
+
+During implementation, provide dedicated automation attributes such as:
+
+- data-testid
+- data-test
+- data-qa
+
+This makes automated tests significantly more stable than relying on CSS classes or visible text.
+
+---
+
+## Mobile Considerations
+
+The billing widget should also be verified on mobile devices.
+
+Items to verify include:
+
+- Responsive layout
+- Touch target size
+- Scrolling behavior
+- Landscape orientation
+- Dropdown usability
+
+### Recommendation
+
+Use appropriate mobile keyboards.
+
+Examples:
+
+- Card Number → Numeric keyboard
+- Postal Code → Numeric keyboard
+- Email → Email keyboard
+
+---
+
+## Browser Autofill
+
+Modern browsers support autofill for payment information.
+
+### Recommendation
+
+Verify that proper HTML autocomplete attributes are implemented.
+
+Examples:
+
+```
+cc-number
+cc-name
+cc-exp-month
+cc-exp-year
+address-line1
+address-line2
+postal-code
+country
+```
+
+This improves both usability and accessibility.
+
+---
+
+# 5. Accessibility Review
+
+## QA-017
+
+### Severity
+
+Medium
+
+### Category
+
+Accessibility
+
+### Title
+
+Required Fields Rely Only on Visual Indicators
+
+### Description
+
+Required fields are identified only by a red asterisk (\*).
+
+### Risk
+
+Users with color vision deficiencies or screen readers may not recognize which fields are required.
+
+### Recommendation
+
+Use proper semantic markup (`required`, `aria-required="true"`) and ensure screen readers announce required fields.
+
+---
+
+## QA-018
+
+### Severity
+
+Medium
+
+### Category
+
+Accessibility
+
+### Title
+
+Validation Messages Should Be Accessible
+
+### Description
+
+The mock-up does not demonstrate how validation errors will be presented.
+
+### Risk
+
+Users may not understand:
+
+- Which field failed
+- Why validation failed
+- How to fix the issue
 
 ### Recommendation
 
 Validation messages should:
 
-- identify the invalid field
-- explain the error
-- explain how to fix it
+- Appear near the relevant field
+- Be associated with the field using ARIA attributes
+- Be understandable by screen readers
 
 ---
 
-## Observation 3
+## QA-019
 
-Keyboard navigation should follow the visual order of the form.
+### Severity
 
-This should be verified during implementation.
+Low
 
----
+### Category
 
-# 4. Security Review
+Accessibility
 
-Since only a UI mock-up was provided, the security implementation cannot be fully evaluated.
+### Title
 
-The following items should be verified during implementation.
+Keyboard Navigation Should Follow Visual Order
 
-## Verify
+### Description
 
-- HTTPS is enforced.
-- Sensitive payment data is transmitted securely.
-- Credit card information is never written to application logs.
-- Sensitive information is not stored in Local Storage or Session Storage.
-- PCI-DSS requirements are satisfied.
-- Browser autocomplete behavior follows security requirements.
+The tab order cannot be verified from the mock-up.
 
----
+### Recommendation
 
-# 5. Performance Review
-
-No obvious performance issues can be identified from the static UI.
-
-The following should be verified during implementation:
-
-- Initial page load time.
-- Form responsiveness.
-- Payment submission time.
-- Duplicate submission prevention.
-- Behavior under slow network conditions.
+Verify that keyboard navigation proceeds naturally from top to bottom and left to right.
 
 ---
 
-# 6. Risk Assessment
+## QA-020
 
-| Area          | Risk                            |
-| ------------- | ------------------------------- |
-| Functional    | Medium                          |
-| Usability     | Medium                          |
-| Accessibility | Medium                          |
-| Security      | High (implementation dependent) |
-| Performance   | Low                             |
+### Severity
 
----
+Low
 
-# 7. Sample Test Cases
+### Category
 
-## Test Case 1 – Successful Payment
+Accessibility
 
-### Preconditions
+### Title
 
-- User is on the billing page.
-- Valid payment information is available.
+Visible Focus Indicators
 
-### Steps
+### Description
 
-1. Select Visa.
-2. Enter a valid card number.
-3. Enter a valid expiration month and year.
-4. Enter cardholder information.
-5. Enter billing address.
-6. Click Continue.
+The mock-up does not indicate keyboard focus styling.
 
-### Expected Result
+### Risk
 
-- Payment information is accepted.
-- User proceeds to the next step.
-- No validation errors are displayed.
+Keyboard users may lose track of the active control.
+
+### Recommendation
+
+Ensure all interactive controls display a visible focus indicator.
 
 ---
 
-## Test Case 2 – Missing Required Fields
+# 6. Security Review
 
-### Steps
+> **Note:** Security cannot be fully evaluated from a static UI. The following items should be verified during implementation.
 
-1. Leave one or more required fields empty.
-2. Click Continue.
+## QA-021
 
-### Expected Result
+### Severity
 
-- Form submission is prevented.
-- Validation messages are displayed.
-- Focus moves to the first invalid field.
+High
 
----
+### Category
 
-## Test Case 3 – Invalid Expiration Date
+Security
 
-### Steps
+### Title
 
-1. Enter valid payment information.
-2. Select an expiration date in the past.
-3. Click Continue.
+PCI Compliance Must Be Verified
 
-### Expected Result
+### Recommendation
 
-- Form submission is prevented.
-- User receives a clear validation message.
+Verify that payment processing complies with PCI-DSS requirements.
+
+Sensitive card data should never be unnecessarily handled or stored by the application.
 
 ---
 
-# 8. Product Recommendations
+## QA-022
 
-1. Detect the card type automatically from the card number.
-2. Display the payment currency and payment type (one-time or recurring).
-3. Rename the unlabeled second address field to **Address Line 2 (Optional)**.
-4. Add a Country selector before State or Province.
-5. Review whether every address field is required according to business requirements.
-6. Replace "MI" with "Middle Initial".
-7. Implement clear validation messages.
-8. Verify accessibility compliance.
-9. Validate security and PCI-DSS compliance during implementation.
+### Severity
+
+High
+
+### Category
+
+Security
+
+### Title
+
+Sensitive Information Must Not Be Logged
+
+### Recommendation
+
+Verify that:
+
+- Card number
+- CVV
+- Expiration date
+- Personal information
+
+are never written to:
+
+- Application logs
+- Error logs
+- Analytics
+- Browser console
 
 ---
 
-# Conclusion
+## QA-023
 
-The billing form presents a clear overall layout and logical grouping of payment information.
+### Severity
 
-The most significant usability issue identified is the unlabeled second address field, which may confuse users.
+High
 
-Several additional observations require clarification from the Product team rather than being confirmed defects, particularly regarding the required billing address fields and validation behavior.
+### Category
 
-Overall, the UI appears suitable as a starting point, but several usability, accessibility, and implementation details should be reviewed before production.
+Security
+
+### Title
+
+Sensitive Information Must Not Be Stored in Browser Storage
+
+### Recommendation
+
+Verify that payment information is not stored in:
+
+- Local Storage
+- Session Storage
+- Cookies
+
+unless explicitly required and implemented securely.
+
+---
+
+## QA-024
+
+### Severity
+
+Medium
+
+### Category
+
+Security
+
+### Title
+
+HTTPS Enforcement
+
+### Recommendation
+
+Verify that all payment pages use HTTPS and that mixed-content requests are prevented.
+
+---
+
+# 7. Privacy Review
+
+## QA-025
+
+### Severity
+
+Medium
+
+### Category
+
+Privacy
+
+### Title
+
+Personal Data Retention
+
+### Question
+
+How long is billing information retained?
+
+### Recommendation
+
+Verify that personal information is stored only as long as required by business and legal requirements.
+
+---
+
+## QA-026
+
+### Severity
+
+Medium
+
+### Category
+
+Privacy
+
+### Title
+
+Mask Sensitive Information
+
+### Recommendation
+
+Verify that any displayed payment information is appropriately masked.
+
+Example:
+
+```
+**** **** **** 1234
+```
+
+instead of displaying the full card number.
+
+---
+
+# 8. Logging & Monitoring
+
+## QA-027
+
+### Severity
+
+Medium
+
+### Category
+
+Observability
+
+### Title
+
+Application Logging
+
+### Recommendation
+
+Verify that:
+
+- Successful payments are logged.
+- Failed payments are logged.
+- Duplicate payment attempts are recorded.
+- No sensitive payment information appears in logs.
+
+---
+
+## QA-028
+
+### Severity
+
+Low
+
+### Category
+
+Monitoring
+
+### Title
+
+Monitoring and Alerting
+
+### Recommendation
+
+Critical payment failures should generate monitoring alerts for operations teams.
+
+---
+
+# 9. Analytics
+
+## QA-029
+
+### Severity
+
+Low
+
+### Category
+
+Analytics
+
+### Title
+
+Payment Flow Analytics
+
+### Recommendation
+
+Verify analytics events for:
+
+- Payment Started
+- Payment Cancelled
+- Payment Failed
+- Payment Completed
+
+No sensitive payment information should be included in analytics payloads.
+
+---
+
+# 10. Internationalization
+
+## QA-030
+
+### Severity
+
+Medium
+
+### Category
+
+Internationalization
+
+### Title
+
+Support for International Users
+
+### Questions
+
+- Does the application support multiple languages?
+- Does it support international currencies?
+- Does it support different address formats?
+- Does it support Unicode characters?
+
+Examples:
+
+```
+José
+François
+Иван
+李小龍
+```
+
+### Recommendation
+
+Verify localization, formatting, and character support.
+
+---
+
+# 11. Compatibility
+
+## QA-031
+
+### Severity
+
+Medium
+
+### Category
+
+Compatibility
+
+### Recommendation
+
+Verify the payment form on:
+
+### Browsers
+
+- Chrome
+- Firefox
+- Safari
+- Edge
+
+### Operating Systems
+
+- Windows
+- macOS
+- Android
+- iOS
+
+---
+
+# 12. Non-Functional Testing
+
+The following quality attributes should also be verified:
+
+- Performance
+- Reliability
+- Recoverability
+- Availability
+- Security
+- Accessibility
+- Compatibility
+- Scalability
+- Maintainability
+
+These cannot be fully evaluated from the UI alone but should be included in the overall QA strategy.
